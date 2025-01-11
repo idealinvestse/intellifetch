@@ -2,7 +2,7 @@
 from celery import Celery
 import os
 from .scraper import scrape_merinfo
-from .database import SessionLocal, Base, engine
+from .database import SessionLocal
 from .models import Person, Cohabitant, Vehicle, CompanyEngagement
 from .schemas import PersonOutput
 from sqlalchemy.orm import Session
@@ -11,8 +11,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
-CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/0")
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://redis:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://redis:6379/0")
 
 celery_app = Celery('tasks', broker=CELERY_BROKER_URL, backend=CELERY_RESULT_BACKEND)
 
@@ -44,7 +44,7 @@ def scrape_and_store(self, first_name: str, last_name: str, city: str):
                     "vehicles": [{"make_model": veh.make_model, "model_year": veh.model_year, "owner": veh.owner, "registration": veh.registration} for veh in existing_person.vehicles],
                     "companies": [{"company_name": comp.company_name, "position": comp.position, "company_url": comp.company_url} for comp in existing_person.companies]
                 }
-        
+    
             # Skapa ny person
             new_person = Person(
                 full_name=data.get('full_name'),
@@ -76,9 +76,9 @@ def scrape_and_store(self, first_name: str, last_name: str, city: str):
             for veh in data.get('vehicles', []):
                 vehicle = Vehicle(
                     make_model=veh['make_model'],
-                    model_year=veh['model_year'],
-                    owner=veh['owner'],
-                    registration=veh['registration'],
+                    model_year=veh.get('model_year'),
+                    owner=veh.get('owner'),
+                    registration=veh.get('registration'),
                     person_id=new_person.id
                 )
                 db.add(vehicle)
@@ -89,8 +89,8 @@ def scrape_and_store(self, first_name: str, last_name: str, city: str):
             for comp in data.get('companies', []):
                 company = CompanyEngagement(
                     company_name=comp['company_name'],
-                    position=comp['position'],
-                    company_url=comp['company_url'],
+                    position=comp.get('position'),
+                    company_url=comp.get('company_url'),
                     person_id=new_person.id
                 )
                 db.add(company)
@@ -122,13 +122,6 @@ def scrape_and_store(self, first_name: str, last_name: str, city: str):
             raise self.retry(exc=e, countdown=60)
         finally:
             db.close()
-    ```
-    
-#### `celery_worker.py`
-
-```python
-# celery_worker.py
-from app.tasks import celery_app
-
-if __name__ == '__main__':
-    celery_app.start()
+    except Exception as e:
+        logger.error(f"Task failed: {e}")
+        raise self.retry(excStream error:  (Request ID: req_555d593b0ed350d4a09f7a0277317ceb)
