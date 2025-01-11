@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"github.allowUnsafeSSL": true,
+		"github.remoteName": "idealinvestse"
+	}
+}

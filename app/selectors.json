@@ -1,0 +1,14 @@
+{
+    "search_result_link": "a.list-result__link",
+    "person_name": "span.namn",
+    "person_age": "span.mi-text-sm",
+    "person_city": "span[dusk='summery-city']",
+    "person_address": "address.mi-not-italic",
+    "phone_number": "a[href^='tel:']",
+    "birthday_indicator": "span.mi-font-bold",
+    "national_id_search": "div[dusk='summery-pnr']",
+    "marital_status_header": "Civilstatus",
+    "cohabitants_section": "h3:contains('Personer som bor på adressen')",
+    "vehicles_section": "h3:contains('Fordon på adressen')",
+    "companies_section": "h2:contains('jobb & styrelseuppdrag')"
+}

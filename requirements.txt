@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+selenium
+sqlalchemy
+pydantic
+beautifulsoup4
+celery
+redis
+python-dotenv
+sentry-sdk
